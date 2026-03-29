@@ -95,28 +95,28 @@ class PoissonGenerator:
         return interval
 
 
-if __name__ == "__main__":
-    # --- Demo: constant lambda ---
-    gen_const = PoissonGenerator.from_constant(rate=10)
-    print("=== Constant λ = 10 trucks/hour ===")
-    t = 0.0
-    for i in range(10):
-        interval = gen_const.next_arrival(t)
-        t += interval
-        print(f"  Truck {i + 1}: arrival at t = {t:.0f}s ({t / 60:.1f} min)")
-
-    # --- Demo: block profile ---
-    blocks = [
-        (0, 6, 3),
-        (6, 9, 15),
-        (9, 14, 5),
-        (14, 18, 12),
-        (18, 24, 3),
-    ]
-    gen_blocks = PoissonGenerator.from_blocks(blocks)
-    print("\n=== Block profile ===")
-    for hour in [3, 7, 11, 16, 22]:
-        t_sec = hour * 3600
-        lam = gen_blocks.get_lambda(t_sec)
-        interval = gen_blocks.next_arrival(t_sec)
-        print(f"  {hour}:00 -> λ = {lam} trucks/hour, next arrival in {interval:.0f}s ({interval / 60:.1f} min)")
+# if __name__ == "__main__":
+#     # --- Demo: constant lambda ---
+#     gen_const = PoissonGenerator.from_constant(rate=10)
+#     print("=== Constant λ = 10 trucks/hour ===")
+#     t = 0.0
+#     for i in range(10):
+#         interval = gen_const.next_arrival(t)
+#         t += interval
+#         print(f"  Truck {i + 1}: arrival at t = {t:.0f}s ({t / 60:.1f} min)")
+#
+#     # --- Demo: block profile ---
+#     blocks = [
+#         (0, 6, 3),
+#         (6, 9, 15),
+#         (9, 14, 5),
+#         (14, 18, 12),
+#         (18, 24, 3),
+#     ]
+#     gen_blocks = PoissonGenerator.from_blocks(blocks)
+#     print("\n=== Block profile ===")
+#     for hour in [3, 7, 11, 16, 22]:
+#         t_sec = hour * 3600
+#         lam = gen_blocks.get_lambda(t_sec)
+#         interval = gen_blocks.next_arrival(t_sec)
+#         print(f"  {hour}:00 -> λ = {lam} trucks/hour, next arrival in {interval:.0f}s ({interval / 60:.1f} min)")
