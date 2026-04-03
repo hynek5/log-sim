@@ -2,8 +2,10 @@ import random
 import math
 from typing import Callable
 
+from log_sim.arrivals.arrival_source import ArrivalSource
 
-class PoissonGenerator:
+
+class PoissonSource(ArrivalSource):
     """
     Truck arrival generator using Poisson process.
 
@@ -22,7 +24,7 @@ class PoissonGenerator:
         self._lambda_func = lambda_func
 
     @classmethod
-    def from_constant(cls, rate: float) -> "PoissonGenerator":
+    def from_constant(cls, rate: float) -> "PoissonSource":
         """
         Constant lambda — homogeneous Poisson process.
 
@@ -35,7 +37,7 @@ class PoissonGenerator:
         return cls(lambda_func=lambda t: rate)
 
     @classmethod
-    def from_blocks(cls, blocks: list[tuple[float, float, float]]) -> "PoissonGenerator":
+    def from_blocks(cls, blocks: list[tuple[float, float, float]]) -> "PoissonSource":
         """
         Block-wise lambda — non-homogeneous process with time intervals.
 
@@ -57,7 +59,7 @@ class PoissonGenerator:
         return cls(lambda_func=block_lambda)
 
     @classmethod
-    def from_function(cls, func: Callable[[float], float]) -> "PoissonGenerator":
+    def from_function(cls, func: Callable[[float], float]) -> "PoissonSource":
         """
         Continuous lambda — arbitrary function of time.
 
