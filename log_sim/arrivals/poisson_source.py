@@ -2,8 +2,10 @@ import random
 import math
 from typing import Callable
 
+from log_sim.arrivals.arrival_source import ArrivalSource
 
-class PoissonGenerator:
+
+class PoissonSource(ArrivalSource):
     """
     Truck arrival generator using Poisson process.
 
@@ -22,7 +24,7 @@ class PoissonGenerator:
         self._lambda_func = lambda_func
 
     @classmethod
-    def from_constant(cls, rate: float) -> "PoissonGenerator":
+    def from_constant(cls, rate: float) -> "PoissonSource":
         """
         Constant lambda — homogeneous Poisson process.
 
@@ -35,7 +37,7 @@ class PoissonGenerator:
         return cls(lambda_func=lambda t: rate)
 
     @classmethod
-    def from_blocks(cls, blocks: list[tuple[float, float, float]]) -> "PoissonGenerator":
+    def from_blocks(cls, blocks: list[tuple[float, float, float]]) -> "PoissonSource":
         """
         Block-wise lambda — non-homogeneous process with time intervals.
 
@@ -57,7 +59,7 @@ class PoissonGenerator:
         return cls(lambda_func=block_lambda)
 
     @classmethod
-    def from_function(cls, func: Callable[[float], float]) -> "PoissonGenerator":
+    def from_function(cls, func: Callable[[float], float]) -> "PoissonSource":
         """
         Continuous lambda — arbitrary function of time.
 
@@ -88,9 +90,11 @@ class PoissonGenerator:
 
         if current_lambda <= 0:
             return float('inf')
-
+        random_num = random.random() #0 to 1
+        if random_num == 1:
+            random_num = random.random()
         lambda_per_second = current_lambda / 3600
-        interval = -math.log(1-random.random()) / lambda_per_second
+        interval = -math.log(1-random_num) / lambda_per_second
 
         return interval
 
