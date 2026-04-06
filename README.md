@@ -43,3 +43,6 @@ pytest
 - `simpy >= 4.1` — discrete-event simulation engine
 - `matplotlib >= 3.10.8` — histogram plotting
 - `pytest >= 8.0` — testing (dev)
+
+## Output
+See histogram comparison of the classic and flow-trough docks created in project folder.
