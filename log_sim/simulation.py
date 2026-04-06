@@ -1,4 +1,4 @@
-import random
+import statistics
 
 import simpy
 from matplotlib import pyplot as plt
@@ -8,9 +8,6 @@ from log_sim.arrivals.poisson_source import PoissonSource
 from log_sim.center.dockyard import DockYard, ClassicDockYard, FlowThroughDockYard
 from log_sim.truck_spawner import TruckSpawner
 
-
-def timeout_generator(seconds: int, env: simpy.Environment):
-    yield env.timeout(seconds)
 
 def truck_process(env: simpy.Environment, dockyard: DockYard, truck_id):
     dock = yield dockyard.request_dock()
@@ -29,7 +26,7 @@ def truck_process(env: simpy.Environment, dockyard: DockYard, truck_id):
     #print(f"[T:{env.now}:{truck_id} has left the dock {dock.index}])")
 
 def run_scenario(dockyard_class, num_docks, arrival_rate, duration, seed):
-    random.seed(seed)
+    #random.seed(seed)
     env = simpy.Environment()
     source = PoissonSource.from_constant(rate=arrival_rate)
 
@@ -42,7 +39,10 @@ def run_scenario(dockyard_class, num_docks, arrival_rate, duration, seed):
             truck_process
         )
     )
+
     env.run(until=duration)
+    truck_spawner.pause()
+    env.run(until=duration + SimConfig.loading_time + 1000)
 
     return {
         "seed": seed,
@@ -77,16 +77,11 @@ if __name__ == "__main__":
         )
         print(f"Running iteration {i}")
 
-
-
-    #handled = [r["handled"] for r in results]
-    #print(f"Mean: {sum(handled) / len(handled):.0f}")
-    #print(f"Min:  {min(handled)}")
-    #print(f"Max:  {max(handled)}")
-
-
     classic = [r["handled"] for r in classic_results]
     flow = [r["handled"] for r in flow_results]
+
+    print(f"Classic - arrived: {statistics.mean(r['arrived'] for r in classic_results):.1f}, handled: {statistics.mean(classic):.1f}")
+    print(f"Flow    - arrived: {statistics.mean(r['arrived'] for r in flow_results):.1f}, handled: {statistics.mean(flow):.1f}")
 
     plt.hist(classic, bins=30, alpha=0.5, label="Classic")
     plt.hist(flow, bins=30, alpha=0.5, label="Flow-through")
@@ -94,43 +89,3 @@ if __name__ == "__main__":
     plt.ylabel("Frequency")
     plt.legend()
     plt.savefig("comparison.png")
-
-#if __name__ == "__main__":
-
-     #env = simpy.Environment()
-     #source = PoissonSource.from_constant(rate=300)
-
-
-     ### test scenario ###
-     #truck_spawner = TruckSpawner(env,
-     #                             TestSource(),
-     #                             TestDockYard(env,2))
-
-
-     ### classic dock yard ###
-     #dockyard = ClassicDockYard(env, 60)
-     #truck_spawner = TruckSpawner(env,
-     #                             source,
-     #                             dockyard)
-
-
-     ### flow trough yard ###
-     #dockyard = FlowThroughDockYard(env, 50)
-     #truck_spawner = TruckSpawner(env,
-      #                           source,
-       #                          dockyard)
-
-     #kicks in spawner and implement truck process
-     #env.process(
-     #    truck_spawner.spawn(truck_process))
-     #env.process(timeout_generator(10, env))
-     #env.run(7200)
-     #print(env.now)
-     #print(f"Total trucks arrived: {truck_spawner.arrived_truck_count}")
-     #print(f"Total trucks handled: {dockyard.trucks_handled}")
-
-
-
-
-
-
