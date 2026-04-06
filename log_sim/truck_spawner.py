@@ -44,10 +44,12 @@ class TruckSpawner:
             yield self.env.timeout(interval)
             self.arrived_truck_count += 1
             name = f"Truck-{self.arrived_truck_count:03d}"
+            #print(f"T:{self.env.now} spawning {name}")
             self.env.process(truck_process(self.env, self.dockyard, name))
 
     def pause(self):
         self._active = self.env.event()  # new unfired event
 
     def resume(self):
-        self._active.succeed()
+        if not self._active.triggered:
+            self._active.succeed()

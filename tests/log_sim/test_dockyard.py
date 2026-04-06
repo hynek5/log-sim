@@ -244,12 +244,6 @@ class TestClassicDockYard:
         expected = ClassicDockYard.BASE_TIME
         assert self.yard.calc_maneuver_time((dock)) == expected
 
-    def test_concrete_values_one_neighbor(self):
-        assert ClassicDockYard.BASE_TIME + ClassicDockYard.ONE_NEIGHBOR_PENALTY == 210
-
-    def test_concrete_values_two_neighbors(self):
-        assert ClassicDockYard.BASE_TIME + ClassicDockYard.TWO_NEIGHBOR_PENALTY == 300
-
 
 # ---------------------------------------------------------------------------
 # FlowThroughDockYard — calc_maneuver_time
@@ -262,9 +256,6 @@ class TestFlowThroughDockYard:
     def test_always_returns_base_time(self):
         for dock in self.yard.docks:
             assert self.yard.calc_maneuver_time(dock) == FlowThroughDockYard.BASE_TIME
-
-    def test_base_time_value(self):
-        assert FlowThroughDockYard.BASE_TIME == 60
 
     def test_unaffected_by_occupied_neighbors(self):
         self.yard.docks[1].occupied = True

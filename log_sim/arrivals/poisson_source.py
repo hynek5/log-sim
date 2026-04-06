@@ -90,9 +90,11 @@ class PoissonSource(ArrivalSource):
 
         if current_lambda <= 0:
             return float('inf')
-
+        random_num = random.random() #0 to 1
+        if random_num == 1:
+            random_num = random.random()
         lambda_per_second = current_lambda / 3600
-        interval = -math.log(1-random.random()) / lambda_per_second
+        interval = -math.log(1-random_num) / lambda_per_second
 
         return interval
 

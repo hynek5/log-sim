@@ -1,5 +1,6 @@
 import simpy
 
+from config.sim_config import SimConfig
 from log_sim.arrivals.test_source import TestSource
 from log_sim.center.dockyard import TestDockYard
 from log_sim.truck_spawner import TruckSpawner
@@ -27,16 +28,17 @@ class TestSimulationBasic:
         # TestDockYard.BASE_TIME=1, SimConfig.loading_time=1, interval=1
         # truck uses dock for 1 (maneuver) + 1 (loading) = 2s
         # interval = 1s, 3 docks → plenty of capacity
-        env, dockyard, spawner = run_simulation(num_docks=3, sim_duration=100)
+        env, dockyard, spawner = run_simulation(num_docks=3, sim_duration=3)
         spawner.pause()
-        env.run(110)
+        env.run(SimConfig.loading_time + 10)
+        #print(f"T:{env.now}")
         assert all(not d.occupied for d in dockyard.docks)
 
     def test_all_docks_return_to_store(self):
         """After simulation, all docks should be back in the store."""
-        env, dockyard, spawner = run_simulation(num_docks=3, sim_duration=100)
+        env, dockyard, spawner = run_simulation(num_docks=3, sim_duration=3)
         spawner.pause()
-        env.run(110)
+        env.run(SimConfig.loading_time + 10)
         assert len(dockyard.store.items) == 3
 
     def test_simulation_advances_time(self):

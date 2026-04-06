@@ -51,7 +51,6 @@ def run_scenario(dockyard_class, num_docks, arrival_rate, duration, seed):
         #"max_queue": yard.max_queue,  # if you track this
     }
 
-results = []
 if __name__ == "__main__":
     classic_results = []
     flow_results = []
@@ -61,8 +60,8 @@ if __name__ == "__main__":
             run_scenario(
                 ClassicDockYard,
                 60,
-                50,
-                3600,
+                SimConfig.arrival_rate,
+                SimConfig.simulation_duration,
                 seed=i
             )
         )
@@ -71,8 +70,8 @@ if __name__ == "__main__":
             run_scenario(
                 FlowThroughDockYard,
                 45,
-                50,
-                3600,
+                SimConfig.arrival_rate,
+                SimConfig.simulation_duration,
                 seed = i
             )
         )

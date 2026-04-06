@@ -1,5 +1,3 @@
-from logging import raiseExceptions
-
 import simpy
 
 from log_sim.center.dock import Dock
@@ -89,18 +87,11 @@ class ClassicDockYard(DockYard):
     def calc_maneuver_time(self, dock):
         time = self.BASE_TIME
         occ_count = self.occupied_neighbor_count(dock)
-        if (occ_count == 0):
-            return time
-        elif occ_count == 1 or self.is_edge_dock(dock):
+        if occ_count == 1 or self.is_edge_dock(dock):
             time = time + self.ONE_NEIGHBOR_PENALTY
         elif occ_count == 2:
             time = time + self.TWO_NEIGHBOR_PENALTY
-        else:
-            raise ValueError(f"Dock {self.index} has more than two neighbors")
         return time
-
-
-
 
 class FlowThroughDockYard(DockYard):
     """
