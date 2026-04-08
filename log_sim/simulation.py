@@ -25,54 +25,58 @@ def truck_process(env: simpy.Environment, dockyard: DockYard, truck_id):
     yield dockyard.release_dock(dock)
     #print(f"[T:{env.now}:{truck_id} has left the dock {dock.index}])")
 
-def run_scenario(dockyard_class, num_docks, arrival_rate, duration, seed):
-    #random.seed(seed)
-    env = simpy.Environment()
-    source = PoissonSource.from_constant(rate=arrival_rate)
 
-    dockyard = dockyard_class(env, num_docks)
-    truck_spawner = TruckSpawner(env,
-                                 source,
-                                 dockyard)
-    env.process(
-        truck_spawner.spawn(
-            truck_process
+class Simulation:
+
+    TIME_BUFFER = 1000
+
+    def run_scenario(self, dockyard_class, num_docks, arrival_rate, duration, seed=None):
+        #random.seed(seed)
+        env = simpy.Environment()
+        source = PoissonSource.from_constant(rate=arrival_rate)
+
+        dockyard = dockyard_class(env, num_docks)
+        truck_spawner = TruckSpawner(env,
+                                     source,
+                                     dockyard)
+        env.process(
+            truck_spawner.spawn(
+                truck_process
+            )
         )
-    )
 
-    env.run(until=duration)
-    truck_spawner.pause()
-    env.run(until=duration + SimConfig.loading_time + 1000)
+        env.run(until=duration)
+        truck_spawner.pause()
+        #drain dockyard
+        env.run(until=duration + SimConfig.loading_time + self.TIME_BUFFER)
 
-    return {
-        "seed": seed,
-        "arrived": truck_spawner.arrived_truck_count,
-        "handled": dockyard.trucks_handled,
-        #"max_queue": yard.max_queue,  # if you track this
-    }
+        return {
+            "seed": seed,
+            "arrived": truck_spawner.arrived_truck_count,
+            "handled": dockyard.trucks_handled,
+        }
 
 if __name__ == "__main__":
     classic_results = []
     flow_results = []
+    simulation = Simulation()
 
     for i in range(1000):
         classic_results.append(
-            run_scenario(
+            simulation.run_scenario(
                 ClassicDockYard,
                 60,
                 SimConfig.arrival_rate,
-                SimConfig.simulation_duration,
-                seed=i
+                SimConfig.simulation_duration
             )
         )
 
         flow_results.append(
-            run_scenario(
+            simulation.run_scenario(
                 FlowThroughDockYard,
                 45,
                 SimConfig.arrival_rate,
-                SimConfig.simulation_duration,
-                seed = i
+                SimConfig.simulation_duration
             )
         )
         print(f"Running iteration {i}")
