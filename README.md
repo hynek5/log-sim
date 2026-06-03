@@ -1,10 +1,11 @@
-# Flow-trough logistic portfolio
-https://heyzine.com/flip-book/fd7c929a99.html
+
 # log-sim
 
 Discrete-event simulation of a logistics dockyard, built on [SimPy](https://simpy.readthedocs.io/).  
 Compares **Classic** (90° reverse-in) vs **Flow-through** (drive-forward) dock layouts under stochastic truck arrivals.
 
+# Flow-trough logistic portfolio
+For more information about a concept using this simulation for operational validation see [portofolio](https://heyzine.com/flip-book/80f43af6e9.html)
 
 
 ## Key Concepts
